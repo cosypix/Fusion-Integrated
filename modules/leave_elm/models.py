@@ -104,6 +104,8 @@ class LeaveApplication(models.Model):
         verbose_name="Is Station Leave"
     )
     
+    is_half_day_start = models.BooleanField(default=False, verbose_name="Half Day Start")
+    is_half_day_end = models.BooleanField(default=False, verbose_name="Half Day End")
     reason = models.TextField(verbose_name="Reason for Leave")
     
     # Status tracking the lifecycle of the request

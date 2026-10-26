@@ -6,14 +6,13 @@ for RBAC (Role-Based Access Control) integration with Fusion authentication syst
 
 from typing import Tuple, Dict, List
 
-# Module metadata - NOTE: Uses 'code' instead of 'name'/slug as per platform requirements
+# Module metadata - matches Module model fields: code, label, base_path, nav_section, status
 MODULE = {
     "code": "leave_elm",
-    "name": "Employee Leave Management",
-    "slug": "leave_elm",
-    # admin-only module without client routes; base_path empty means no prefix check for nav
-    "base_path": "",
-    "description": "Manage employee leave entitlements, applications, approvals, and substitute coverage.",
+    "label": "Employee Leave Management",  # Module model field is 'label', not 'name'
+    "base_path": "",  # admin-only module; no client routes means empty base_path
+    "status": "active",  # required by seed_modules command
+    # description is not a field on the Model - use label only for display
 }
 
 # Navigation items for the admin frontend - list of dicts with required keys

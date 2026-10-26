@@ -103,7 +103,9 @@
             "sort_order": 1,
             "to": "/admin/leave_elm/"
           }
-        ]
+        ],
+        "label": "Employee Leave Management",
+        "status": "active"
       },
       "permissions": [
         {
