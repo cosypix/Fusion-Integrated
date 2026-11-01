@@ -76,4 +76,3 @@ def archive_file(
         "status": file_obj.status,
         "archived_by": user_id,
     }
-
