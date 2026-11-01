@@ -1,9 +1,11 @@
 from rest_framework import serializers
-from modules.leave_elm.models import LeaveApplication, LeaveBalance, SubstituteResponse
+
+from modules.leave_elm.models import LeaveApplication, SubstituteResponse
 
 
 class LeaveBalanceSerializer(serializers.Serializer):
     """Serializer for LeaveBalance object."""
+
     available_balance = serializers.DecimalField(max_digits=5, decimal_places=1)
     annual_entitlement = serializers.DecimalField(max_digits=5, decimal_places=1)
 
@@ -12,7 +14,7 @@ class LeaveApplicationSerializer(serializers.ModelSerializer):
     """Serializer for LeaveApplication object."""
 
     # Custom field to display category nicely
-    category_display = serializers.CharField(source='get_category_display', read_only=True)
+    category_display = serializers.CharField(source="get_category_display", read_only=True)
 
     is_half_day_start = serializers.BooleanField(required=False)
     is_half_day_end = serializers.BooleanField(required=False)
@@ -20,21 +22,21 @@ class LeaveApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveApplication
         fields = [
-            'id',
-            'employee_id',
-            'category',
-            'category_display',
-            'start_date',
-            'end_date',
-            'reason',
-            'is_station_leave',
-            'duration_days',
-            'status',
-            'substitute_id',
-            'is_half_day_start',
-            'is_half_day_end',
+            "id",
+            "employee_id",
+            "category",
+            "category_display",
+            "start_date",
+            "end_date",
+            "reason",
+            "is_station_leave",
+            "duration_days",
+            "status",
+            "substitute_id",
+            "is_half_day_start",
+            "is_half_day_end",
         ]
-        read_only_fields = ['status', 'duration_days']
+        read_only_fields = ["status", "duration_days"]
 
 
 class SubstituteResponseSerializer(serializers.ModelSerializer):
@@ -42,10 +44,12 @@ class SubstituteResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubstituteResponse
-        fields = ['id', 'application_id', 'substitute_id', 'response_status', 'notes']
+        fields = ["id", "application_id", "substitute_id", "response_status", "notes"]
+
 
 class LeaveApplicationCreateSerializer(serializers.Serializer):
     """Input serializer for creating a new leave application."""
+
     employee_id = serializers.CharField(max_length=64)
     category = serializers.CharField(max_length=10)
     start_date = serializers.DateField()
@@ -75,24 +79,23 @@ class LeaveApplicationCreateSerializer(serializers.Serializer):
         try:
             # Call the service layer to handle balance checks, duration calculation, and persistence
             from modules.leave_elm.services.leave import apply_leave
-            result = apply_leave(
-                employee_id=validated_data['employee_id'],
-                category=validated_data['category'],
-                start_date_str=validated_data['start_date'].isoformat(),
-                end_date_str=validated_data['end_date'].isoformat(),
-                reason=validated_data['reason'],
-                substitute_id=validated_data.get('substitute_id'),
-                is_station_leave=validated_data['is_station_leave'],
-                is_half_day_start=validated_data['is_half_day_start'],
-                is_half_day_end=validated_data['is_half_day_end'],
+
+            return apply_leave(
+                employee_id=validated_data["employee_id"],
+                category=validated_data["category"],
+                start_date_str=validated_data["start_date"].isoformat(),
+                end_date_str=validated_data["end_date"].isoformat(),
+                reason=validated_data["reason"],
+                substitute_id=validated_data.get("substitute_id"),
+                is_station_leave=validated_data["is_station_leave"],
+                is_half_day_start=validated_data["is_half_day_start"],
+                is_half_day_end=validated_data["is_half_day_end"],
             )
-            return result
-        except Exception as e:
+        except (ValueError, KeyError) as e:
             # Return error response with the exception message
-            from rest_framework import status
-            raise serializers.ValidationError({
-                'detail': f"Error creating leave application: {str(e)}"
-            })
+            raise serializers.ValidationError(
+                {"detail": f"Error creating leave application: {e!s}"}
+            ) from e
 
 
 class LeaveApplicationUpdateSerializer(serializers.ModelSerializer):
@@ -102,5 +105,5 @@ class LeaveApplicationUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LeaveApplication
-        fields = ['status', 'notes']
-        read_only_fields = ['id']
+        fields = ["status", "notes"]
+        read_only_fields = ["id"]

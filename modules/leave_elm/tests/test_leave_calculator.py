@@ -1,7 +1,7 @@
 """Pytest unit tests for LeaveCalculator - pure Python domain logic with zero database dependencies."""
 
-import pytest
 import datetime
+
 from modules.leave_elm.domain.leave_calculator import LeaveCalculator
 
 
@@ -93,54 +93,72 @@ class TestCLHalfDayCalculations:
         """Full days with no half-day flags should return full count."""
         start = datetime.date(2024, 1, 1)  # Monday
         end = datetime.date(2024, 1, 5)  # Friday
-        assert LeaveCalculator.calculate_cl_days(
-            start, end, is_half_day_start=False, is_half_day_end=False
-        ) == 5.0
+        assert (
+            LeaveCalculator.calculate_cl_days(
+                start, end, is_half_day_start=False, is_half_day_end=False
+            )
+            == 5.0
+        )
 
     def test_half_day_start_only(self):
         """Half-day start only should reduce by 0.5."""
         start = datetime.date(2024, 1, 1)  # Monday
         end = datetime.date(2024, 1, 1)  # Single day with half-day start
         # 1 full day - 0.5 = 0.5
-        assert LeaveCalculator.calculate_cl_days(
-            start, end, is_half_day_start=True, is_half_day_end=False
-        ) == 0.5
+        assert (
+            LeaveCalculator.calculate_cl_days(
+                start, end, is_half_day_start=True, is_half_day_end=False
+            )
+            == 0.5
+        )
 
     def test_half_day_end_only(self):
         """Half-day end only should reduce by 0.5."""
         start = datetime.date(2024, 1, 1)  # Monday
         end = datetime.date(2024, 1, 1)  # Single day with half-day end
         # 1 full day - 0.5 = 0.5
-        assert LeaveCalculator.calculate_cl_days(
-            start, end, is_half_day_start=False, is_half_day_end=True
-        ) == 0.5
+        assert (
+            LeaveCalculator.calculate_cl_days(
+                start, end, is_half_day_start=False, is_half_day_end=True
+            )
+            == 0.5
+        )
 
     def test_both_start_and_end_half_day(self):
         """Both start and end half-day should reduce by 1.0."""
         start = datetime.date(2024, 1, 1)  # Monday
         end = datetime.date(2024, 1, 1)  # Single day
         # 1 full day - 0.5 - 0.5 = 0.0
-        assert LeaveCalculator.calculate_cl_days(
-            start, end, is_half_day_start=True, is_half_day_end=True
-        ) == 0.0
+        assert (
+            LeaveCalculator.calculate_cl_days(
+                start, end, is_half_day_start=True, is_half_day_end=True
+            )
+            == 0.0
+        )
 
     def test_multiple_days_with_half_days(self):
         """Multiple days with half-day start and end."""
         start = datetime.date(2024, 1, 1)  # Monday
         end = datetime.date(2024, 1, 3)  # Wednesday (3 days)
         # 3 full days - 0.5 - 0.5 = 2.0
-        assert LeaveCalculator.calculate_cl_days(
-            start, end, is_half_day_start=True, is_half_day_end=True
-        ) == 2.0
+        assert (
+            LeaveCalculator.calculate_cl_days(
+                start, end, is_half_day_start=True, is_half_day_end=True
+            )
+            == 2.0
+        )
 
     def test_negative_result_clamped_to_zero(self):
         """Should return 0.0 if calculation would be negative."""
         start = datetime.date(2024, 1, 6)  # Saturday
         end = datetime.date(2024, 1, 6)  # Single weekend day
         # 0 full days - 0.5 - 0.5 = -1.0, clamped to 0.0
-        assert LeaveCalculator.calculate_cl_days(
-            start, end, is_half_day_start=True, is_half_day_end=True
-        ) == 0.0
+        assert (
+            LeaveCalculator.calculate_cl_days(
+                start, end, is_half_day_start=True, is_half_day_end=True
+            )
+            == 0.0
+        )
 
 
 class TestVLtoELConversion:
